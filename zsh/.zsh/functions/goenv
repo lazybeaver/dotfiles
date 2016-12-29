@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+source "${HOME}/.zsh/functions/_common.zsh"
+
+check_usage "goenv" "$@"
+
+fullpath=$(greadlink -f "${1}")
+basename=$(basename "${fullpath}")
+srcpath="${fullpath}"
+
+mkdir -p "${srcpath}"
+git init -q "${srcpath}"
+write_tmuxp_yaml "${fullpath}" "${basename}"
+
+cat >> "${srcpath}/main.go" << EOF
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello World")
+}
+EOF
+goimports -w "${srcpath}/main.go"
+
+echo "goenv ready: ${fullpath}"

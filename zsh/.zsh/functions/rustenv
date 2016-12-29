@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+source "${HOME}/.zsh/functions/_common.zsh"
+
+check_usage "rustenv" "$@"
+
+fullpath=$(greadlink -f "${1}")
+basename=$(basename "${fullpath}")
+srcpath="${fullpath}"
+
+cargo new ${basename} --bin
+git init -q "${srcpath}"
+write_tmuxp_yaml "${fullpath}" "${basename}"
+
+echo "rustenv ready: ${fullpath}"

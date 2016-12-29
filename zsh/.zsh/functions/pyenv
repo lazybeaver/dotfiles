@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+source "${HOME}/.zsh/functions/_common.zsh"
+
+check_usage "pyenv" "$@"
+
+fullpath=$(greadlink -f "${1}")
+basename=$(basename "${fullpath}")
+srcpath="${fullpath}/src"
+
+mkdir -p "${srcpath}"
+python3 -m venv "${fullpath}"
+git init -q "${srcpath}"
+write_tmuxp_yaml "${fullpath}" "${basename}"
+
+cat >> "${srcpath}/main.py" << EOF
+import sys
+
+def main(argv):
+  print("Hello World")
+
+if __name__ == "__main__":
+  main(sys.argv[:])
+EOF
+
+echo "pyenv ready: ${fullpath}"

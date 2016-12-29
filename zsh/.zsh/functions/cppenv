@@ -1,0 +1,25 @@
+#!/bin/zsh
+
+source "${HOME}/.zsh/functions/_common.zsh"
+
+check_usage "cppenv" "$@"
+
+fullpath=$(greadlink -f "${1}")
+basename=$(basename "${fullpath}")
+srcpath="${fullpath}"
+
+mkdir -p "${srcpath}"
+git init -q "${srcpath}"
+write_tmuxp_yaml "${fullpath}" "${basename}"
+
+cat >> "${srcpath}/main.cc" << EOF
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+  std::cout << "Hello World" << std::endl;
+  return 0;
+}
+EOF
+clang-format -style Google -i "${srcpath}/main.cc"
+
+echo "cppenv ready: ${fullpath}"
